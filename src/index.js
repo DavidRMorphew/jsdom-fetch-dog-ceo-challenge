@@ -10,12 +10,14 @@ document.addEventListener('DOMContentLoaded', () => {
     
     fetchDogImagesAndAddToDom(imgUrl)
     fetchDogBreedsAndAddToDom(breedUrl)
- 
-    // const liTagsOfBreeds = document.querySelectorAll('#dog-breeds li')
-    // liTagsOfBreeds.forEach(liTag => {
-    //     console.log(liTag)
-    //     liTag.addEventListener('click', event => console.log(event))
-    // })    
+
+    const breedSelect = document.getElementById('breed-dropdown')
+    breedSelect.addEventListener('change', event => {
+        const selectedLetter = event.target.value
+        fetchDogBreedsAndAddToDom(breedUrl, selectedLetter)
+    })
+    
+   
 })
     
     function fetchDogImagesAndAddToDom(imgUrl){
@@ -32,29 +34,47 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     }
     
-    function fetchDogBreedsAndAddToDom(breedUrl){
+    function fetchDogBreedsAndAddToDom(breedUrl, selectedLetter = "none"){
         fetch(breedUrl)
         .then(response => response.json())
         .then(json => {
             const dogBreedNames = Object.keys(json.message)
-            addBreedsIteratively(dogBreedNames)
-            })
-            
+            addBreedsIteratively(dogBreedNames, selectedLetter)
+        })    
     }
     
-    function addBreedsIteratively(dogBreedNames){
-        const breedsUl = document.getElementById('dog-breeds')
+    function addBreedsIteratively(dogBreedNames, selectedLetter){
+        if (selectedLetter === "none") {
+            addBreedNames(dogBreedNames)    
+        } else {
+            const SelectedBreeds = filteredResults(dogBreedNames, selectedLetter)
+            addBreedNames(SelectedBreeds)
+        }
+    }
+    
+    function changeColor(element){
+        element.style.color = (element.style.color === "red") ? "black" : "red"
+    }
+
+    function filteredResults(dogBreedNames, selectedLetter){
+        const selectedBreeds = []
         dogBreedNames.forEach(breedName => {
+            if (breedName[0] === selectedLetter) {
+                selectedBreeds.push(breedName)
+            }
+        })
+        return selectedBreeds   
+    }
+    
+    function addBreedNames(selectedBreedArray){
+        const breedsUl = document.getElementById('dog-breeds')
+        breedsUl.innerHTML = ""
+        selectedBreedArray.forEach(breedName => {
             const li = document.createElement('li')
             breedsUl.appendChild(li)
             li.innerText = breedName.toUpperCase()
             li.addEventListener('click', event => {
                 changeColor(event.target)
-                // event.target.style.color = "red"
             })
         })
-    }
-    
-    function changeColor(element){
-        element.style.color = (element.style.color === "red") ? "black" : "red"
     }
