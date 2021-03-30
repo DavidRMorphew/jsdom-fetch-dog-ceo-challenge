@@ -5,6 +5,8 @@ const breedUrl = 'https://dog.ceo/api/breeds/list/all'
 
 
 document.addEventListener('DOMContentLoaded', () => {
+    const dropdown = document.getElementById('breed-dropdown')
+    dropdown.innerHTML = `<option value="none">none</option> ${dropdown.innerHTML}`
     const imageContainer = document.getElementById("dog-image-container")
     imageContainer.appendChild(dogImageUl)
     
